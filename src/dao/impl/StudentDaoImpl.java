@@ -7,33 +7,39 @@ import java.util.*;
 
 public class StudentDaoImpl implements StudentDao {
 
-    private final Map<UUID, Student> studentsGrades = new HashMap<>();
-
+    public static final Set<Student> studentsGrades = new HashSet<>();
 
     @Override
     public void addStudent(Student student) {
-        System.out.println(student.toString());
-        studentsGrades.put(student.getId(), student);
+        studentsGrades.add(student);
     }
 
     @Override
     public void delete(UUID id) {
-        studentsGrades.remove(id);
+        var student = find(id).isPresent() ? find(id).get() : null;
+        studentsGrades.remove(student);
     }
 
     @Override
-    public void updateGrade(UUID id, String subject, int indexOfGrade, Integer grade) {
-
+    public void updateGrade(UUID id, int indexOfGrade, int grade) {
+        var st = find(id).isPresent() ? find(id).get() : null;
+        if(st != null) {
+            studentsGrades.remove(st);
+            var grades = st.getGrades();
+            grades.add(indexOfGrade, grade);
+            System.out.println(indexOfGrade + " " + grade);
+            st.setGrades(grades);
+            addStudent(st);
+        }
     }
 
     @Override
     public Collection<Student> findAll() {
-        System.out.println(studentsGrades.values().size());
-        return studentsGrades.values();
+        return studentsGrades;
     }
 
     @Override
-    public Student find(UUID id) {
-        return studentsGrades.get(id);
+    public Optional<Student> find(UUID id) {
+        return studentsGrades.stream().filter(student -> student.getId().equals(id)).findFirst();
     }
 }

@@ -2,16 +2,19 @@ package model;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 public class Student {
 
     private UUID id;
 
-    private Fio fio;
+    private String name;
 
-    private List<Grade> grades = new ArrayList<>();
+//    private String surname;
+//
+//    private String patronymic;
+
+    private List<Integer> grades = new ArrayList<>();
 
     public UUID getId() {
         return id;
@@ -21,28 +24,27 @@ public class Student {
         this.id = id;
     }
 
-    public Fio getFio() {
-        return fio;
+
+    public String getName() {
+        return name;
     }
 
-    public void setFio(Fio fio) {
-        this.fio = fio;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public List<Grade> getGrades() {
+    public List<Integer> getGrades() {
         return grades;
-    }
-
-    public void setGrades(List<Grade> grades) {
-        this.grades = grades;
     }
 
     @Override
     public String toString() {
-        return "Student{" +
-                "id=" + id +
-                ", fio=" + fio +
-                ", grades=" + grades +
-                '}';
+        return "id=" + id +
+                ", name='" + name + '\'' +
+                ", grades=" + grades;
+    }
+
+    public void setGrades(List<Integer> grades) {
+        this.grades = grades;
     }
 }

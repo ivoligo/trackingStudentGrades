@@ -2,9 +2,7 @@ package dao;
 
 import model.Student;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public interface StudentDao {
 
@@ -12,9 +10,9 @@ public interface StudentDao {
 
     void delete(UUID id);
 
-    void updateGrade(UUID id, String subject, int indexOfGrade, Integer grade);
+    void updateGrade(UUID id, int indexOfGrade, int grade);
 
     Collection<Student> findAll();
 
-    Student find(UUID id);
+    Optional<Student> find(UUID id);
 }
