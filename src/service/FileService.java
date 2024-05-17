@@ -1,58 +1,70 @@
 package service;
 
 import dao.impl.StudentDaoImpl;
-import exception.FileServiceException;
 import model.Student;
-import org.json.simple.JSONObject;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.*;
+import java.io.*;
+import java.util.Arrays;
+import java.util.Set;
 
 public class FileService {
 
-    public static final String studentsGradesFile = "data/studentsGrades.json";
+    private static final String DATA_DIR = "data";
+    public static final String studentsGradesFile = "studentsGrades.dat";
 
-    public Path createdFile(String filename) {
-        try {
-            if (Files.exists(Path.of(filename))) {
-                Files.delete(Path.of(filename));
-            }
-            return Files.createFile(Path.of(filename));
-        } catch (IOException ex) {
-            throw new FileServiceException("файл не создан", ex);
+    public static void writeToFile(String filename) {
+
+        File file = new File(DATA_DIR + "/" + filename);
+        System.out.println(file);
+        System.out.println(file.isFile());
+        try (FileOutputStream fos = new FileOutputStream(file);
+             ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+
+            oos.writeObject(StudentDaoImpl.studentsGrades);
+            oos.flush();
+
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException("файл не найден");
+        } catch (IOException e) {
+            throw new RuntimeException("Проблема при записи в файл");
         }
     }
 
+    public static void readFromFile(String filename) {
 
-    public OutputStream writeFile(String filename) {
-        try {
-            return Files.newOutputStream(Path.of(filename));
-        } catch (IOException ex) {
-            throw new FileServiceException("Данные не записаны в файл", ex);
+        if (filename.isEmpty()) filename = studentsGradesFile;
+        File file = new File(DATA_DIR + "/" + filename);
+
+        try (FileInputStream fis = new FileInputStream(file);
+             ObjectInputStream ois = new ObjectInputStream(fis)) {
+
+            StudentDaoImpl.studentsGrades = (Set<Student>) ois.readObject();
+
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException("файл не найден");
+        } catch (IOException e) {
+            throw new RuntimeException("Проблема при записи в файл");
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("проблема при чтении объекта");
         }
-
     }
 
-    public void writeJsonFile() throws IOException {
-
-        Collection<Student> studentsGrades = StudentDaoImpl.studentsGrades;
-        List<JSONObject> jsonObjects = new ArrayList<>();
-        for(Student student : studentsGrades) {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("id", student.getId().toString());
-            jsonObject.put("name", student.getName());
-            jsonObject.put("grades", student.getGrades());
-            jsonObjects.add(jsonObject);
-        }
-
-            Files.writeString(Path.of(studentsGradesFile), jsonObjects.toString());
-
+    public static File[] getFilesName() {
+        File[] files;
+        File dir = new File(DATA_DIR);
+        files = dir.listFiles() != null ? dir.listFiles() : new File[0];
+        Arrays.stream(files)
+                .filter(File::isFile)
+                .forEach(file -> System.out.println(file.getName()));
+        return files;
     }
 
-    public Path getFile() throws IOException {
-        return Path.of(studentsGradesFile);
+    public static boolean isExists(String filename, File[] files) {
+
+
+        return Arrays.stream(files)
+                .anyMatch(file -> file.getName().equals(filename))
+                ||
+                filename.isEmpty();
     }
 }

@@ -8,11 +8,13 @@ public interface StudentDao {
 
     void addStudent(Student Student);
 
-    void delete(UUID id);
+    void delete(String name);
 
-    void updateGrade(UUID id, int indexOfGrade, int grade);
+    void updateGrade(String name, int indexOfGrade, int grade);
 
     Collection<Student> findAll();
 
-    Optional<Student> find(UUID id);
+    Optional<Student> find(String name);
+
+    void addGradeForStudent(String name, Integer grade);
 }

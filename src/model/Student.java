@@ -1,29 +1,17 @@
 package model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class Student {
+public class Student implements Serializable {
 
-    private UUID id;
+    private static final long serialVersionUID = 1L;
 
     private String name;
 
-//    private String surname;
-//
-//    private String patronymic;
-
     private List<Integer> grades = new ArrayList<>();
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
 
     public String getName() {
         return name;
@@ -37,14 +25,13 @@ public class Student {
         return grades;
     }
 
-    @Override
-    public String toString() {
-        return "id=" + id +
-                ", name='" + name + '\'' +
-                ", grades=" + grades;
-    }
-
     public void setGrades(List<Integer> grades) {
         this.grades = grades;
+    }
+
+    @Override
+    public String toString() {
+        return "name='" + name + '\'' +
+                ", grades=" + grades;
     }
 }

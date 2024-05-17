@@ -7,7 +7,7 @@ import java.util.*;
 
 public class StudentDaoImpl implements StudentDao {
 
-    public static final Set<Student> studentsGrades = new HashSet<>();
+    public static Set<Student> studentsGrades = new HashSet<>();
 
     @Override
     public void addStudent(Student student) {
@@ -15,19 +15,18 @@ public class StudentDaoImpl implements StudentDao {
     }
 
     @Override
-    public void delete(UUID id) {
-        var student = find(id).isPresent() ? find(id).get() : null;
+    public void delete(String name) {
+        var student = find(name).isPresent() ? find(name).get() : null;
         studentsGrades.remove(student);
     }
 
     @Override
-    public void updateGrade(UUID id, int indexOfGrade, int grade) {
-        var st = find(id).isPresent() ? find(id).get() : null;
+    public void updateGrade(String name, int indexOfGrade, int grade) {
+        var st = find(name).isPresent() ? find(name).get() : null;
         if(st != null) {
             studentsGrades.remove(st);
             var grades = st.getGrades();
             grades.add(indexOfGrade, grade);
-            System.out.println(indexOfGrade + " " + grade);
             st.setGrades(grades);
             addStudent(st);
         }
@@ -39,7 +38,18 @@ public class StudentDaoImpl implements StudentDao {
     }
 
     @Override
-    public Optional<Student> find(UUID id) {
-        return studentsGrades.stream().filter(student -> student.getId().equals(id)).findFirst();
+    public Optional<Student> find(String name) {
+        return studentsGrades.stream().filter(student -> student.getName().equals(name)).findFirst();
+    }
+
+    @Override
+    public void addGradeForStudent(String name, Integer grade) {
+        var stOpt = find(name);
+        if (stOpt.isPresent()) {
+            var st = stOpt.get();
+            st.getGrades().add(grade);
+        } else {
+            System.out.println("Студент не найден");
+        }
     }
 }
